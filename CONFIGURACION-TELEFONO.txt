@@ -1,0 +1,35 @@
+VEXA ESTUDIO PAGE — VERIFICACIÓN REAL DE TELÉFONO
+
+Ahora el formulario exige verificar el número mediante un código OTP enviado por SMS antes de permitir el envío.
+
+ALCANCE
+- Países de Latinoamérica mediante selector de código internacional.
+- El usuario recibe un código por SMS.
+- El código se comprueba en el servidor.
+- La solicitud al correo solo se acepta con un token de verificación válido.
+
+SERVICIO USADO
+Twilio Verify.
+
+VARIABLES DE ENTORNO EN VERCEL
+Configurá estas variables en el proyecto de Vercel:
+
+TWILIO_ACCOUNT_SID=tu_account_sid
+TWILIO_AUTH_TOKEN=tu_auth_token
+TWILIO_VERIFY_SERVICE_SID=tu_verify_service_sid
+VERIFICATION_TOKEN_SECRET=una_clave_larga_y_aleatoria
+EMAIL_EMPRESA=kokofabrica@gmail.com
+
+IMPORTANTE
+1. Crear una cuenta de Twilio.
+2. Crear un servicio de Verify.
+3. Copiar Account SID, Auth Token y Verify Service SID a las variables de entorno.
+4. Generar una clave aleatoria larga para VERIFICATION_TOKEN_SECRET.
+5. Mantener estas claves SOLO en Vercel. Nunca ponerlas en script.js ni index.html.
+6. Después de configurar las variables, volver a desplegar el proyecto.
+
+POR QUÉ OTP
+Una validación de formato o una API de "phone lookup" no demuestra que una persona tenga acceso al número. El SMS con código sí permite comprobar que el usuario controla ese número.
+
+NOTA
+El envío de SMS tiene costo según Twilio y el país. El formulario queda bloqueado hasta que el número sea verificado.

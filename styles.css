@@ -308,3 +308,21 @@ input:focus, select:focus { border-color: var(--cyan); box-shadow: 0 0 0 3px rgb
     font-size: 0.85em;
     opacity: 0.75;
 }
+
+/* Verificación de teléfono */
+.phone-verification { margin-top: 24px; }
+.phone-row { display: grid; grid-template-columns: minmax(175px, .7fr) 1fr; gap: 10px; }
+.phone-actions { display: flex; align-items: center; gap: 12px; margin-top: 12px; min-height: 38px; }
+.phone-status { font-size: 12px; color: var(--muted); }
+.phone-status.success { color: var(--success); }
+.phone-status.error { color: #ff8e8e; }
+.verification-code { margin-top: 16px; padding: 16px; border: 1px solid var(--line); border-radius: 14px; background: rgba(4,14,24,.45); }
+.verification-code.hidden { display: none; }
+.verification-code label { display: block; margin-bottom: 8px; font-size: 12px; color: #d8e6f0; font-weight: 600; }
+.verification-row { display: grid; grid-template-columns: 1fr auto; gap: 10px; }
+.verification-row input { letter-spacing: .18em; font-weight: 700; }
+.button:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+@media (max-width: 600px) {
+  .phone-row, .verification-row { grid-template-columns: 1fr; }
+  .phone-actions { align-items: flex-start; flex-direction: column; }
+}
