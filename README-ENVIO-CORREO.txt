@@ -17,6 +17,7 @@ La primera vez que FormSubmit reciba una solicitud para ese correo, puede pedir 
 QUE SE ENVIA
 - Nombre del emprendimiento
 - Publico objetivo
+- WhatsApp / Telefono de contacto
 - Tipo de web
 - Frecuencia de mantenimiento
 - Redes sociales seleccionadas

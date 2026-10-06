@@ -155,7 +155,7 @@ triggers.forEach(trigger => {
    El envío se hace mediante FormSubmit, así que no necesitás
    crear un servidor/backend propio.
    ========================================================= */
-const EMAIL_EMPRESA = 'xenastudiopage@gmail.com';
+const EMAIL_EMPRESA = 'kokofabrica@gmail.com';
 const FORM_SUBMIT_URL = `https://formsubmit.co/ajax/${EMAIL_EMPRESA}`;
 
 async function enviarSolicitudPorEmail() {
@@ -183,6 +183,7 @@ async function enviarSolicitudPorEmail() {
   // Datos que ya existen en el formulario. No se cambió la interfaz.
   datos.append('Nombre del emprendimiento', document.getElementById('nombreNegocio').value);
   datos.append('Publico objetivo', document.getElementById('publicoObjetivo').value);
+  datos.append('WhatsApp / Teléfono', document.getElementById('whatsapp').value);
   datos.append('Tipo de web', NOMBRES_PLAN[planKey] ?? planKey);
   datos.append('Frecuencia de mantenimiento', freqSelect.options[freqSelect.selectedIndex]?.textContent ?? '');
   datos.append('Redes sociales', redesSelect.options[redesSelect.selectedIndex]?.textContent ?? '');
