@@ -27,3 +27,9 @@ QUE SE ENVIA
 - Cuota de mantenimiento
 
 No se modificaron los precios ni la logica del cotizador.
+
+
+CORRECCION DEL TELEFONO
+El número de contacto se envía ahora mediante AJAX en formato JSON, siguiendo el método documentado por FormSubmit.
+Además, el mismo número se incluye con las claves "telefono", "whatsapp" y "Contacto telefonico" para asegurar
+que el contacto telefónico quede visible en el correo recibido.

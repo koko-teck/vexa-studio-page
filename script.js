@@ -175,30 +175,44 @@ async function enviarSolicitudPorEmail() {
     ? 'A cotizar'
     : formatoMoneda(PRECIOS_MANTENIMIENTO[planKey]?.[freqKey] ?? 0) + ' /mes';
 
-  const datos = new URLSearchParams();
-  datos.append('_subject', `Nueva solicitud web — ${document.getElementById('nombreNegocio').value}`);
-  datos.append('_template', 'table');
-  datos.append('_captcha', 'false');
+  // Tomamos el teléfono directamente del elemento del formulario y lo enviamos
+  // con un nombre técnico simple para evitar que el servicio de correo lo omita.
+  const telefono = document.getElementById('whatsapp').value.trim();
 
-  // Datos que ya existen en el formulario. No se cambió la interfaz.
-  datos.append('Nombre del emprendimiento', document.getElementById('nombreNegocio').value);
-  datos.append('Publico objetivo', document.getElementById('publicoObjetivo').value);
-  datos.append('WhatsApp / Teléfono', document.getElementById('whatsapp').value);
-  datos.append('Tipo de web', NOMBRES_PLAN[planKey] ?? planKey);
-  datos.append('Frecuencia de mantenimiento', freqSelect.options[freqSelect.selectedIndex]?.textContent ?? '');
-  datos.append('Redes sociales', redesSelect.options[redesSelect.selectedIndex]?.textContent ?? '');
-  datos.append('Boton de WhatsApp', tieneWsp ? 'Sí' : 'No');
-  datos.append('Formulario de consultas', tieneLeads ? 'Sí' : 'No');
-  datos.append('Inversion inicial', totalDesarrollo);
-  datos.append('Cuota de mantenimiento', mantenimiento);
+  if (!telefono) {
+    throw new Error('El teléfono de contacto es obligatorio.');
+  }
+
+  const datos = {
+    _subject: `Nueva solicitud web — ${document.getElementById('nombreNegocio').value}`,
+    _template: 'table',
+    _captcha: 'false',
+
+    'Nombre del emprendimiento': document.getElementById('nombreNegocio').value,
+    'Publico objetivo': document.getElementById('publicoObjetivo').value,
+
+    // Varias etiquetas con el mismo valor para que el contacto quede visible
+    // incluso si el cliente de correo interpreta distinto alguna etiqueta.
+    telefono: telefono,
+    whatsapp: telefono,
+    'Contacto telefonico': telefono,
+
+    'Tipo de web': NOMBRES_PLAN[planKey] ?? planKey,
+    'Frecuencia de mantenimiento': freqSelect.options[freqSelect.selectedIndex]?.textContent ?? '',
+    'Redes sociales': redesSelect.options[redesSelect.selectedIndex]?.textContent ?? '',
+    'Boton de WhatsApp': tieneWsp ? 'Sí' : 'No',
+    'Formulario de consultas': tieneLeads ? 'Sí' : 'No',
+    'Inversion inicial': totalDesarrollo,
+    'Cuota de mantenimiento': mantenimiento
+  };
 
   const respuesta = await fetch(FORM_SUBMIT_URL, {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
-      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+      'Content-Type': 'application/json'
     },
-    body: datos.toString()
+    body: JSON.stringify(datos)
   });
 
   if (!respuesta.ok) {
