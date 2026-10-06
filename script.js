@@ -145,120 +145,18 @@ triggers.forEach(trigger => {
 });
 
 /* =========================================================
-   VERIFICACIÓN DE TELÉFONO + ENVÍO DE SOLICITUD
-   La solicitud solo se puede enviar después de confirmar el OTP.
+   ENVÍO DE SOLICITUDES POR EMAIL — NUEVO
+   =========================================================
+   No se modificó la lógica del cotizador ni sus precios.
+
+   IMPORTANTE: reemplazá SOLO el correo de abajo por el Gmail
+   de tu empresa. Ejemplo: contacto@tuempresa.com o tuempresa@gmail.com
+
+   El envío se hace mediante FormSubmit, así que no necesitás
+   crear un servidor/backend propio.
    ========================================================= */
-const codigoPais = document.getElementById('codigoPais');
-const telefonoInput = document.getElementById('whatsapp');
-const btnEnviarCodigo = document.getElementById('btnEnviarCodigo');
-const btnVerificarCodigo = document.getElementById('btnVerificarCodigo');
-const codigoVerificacion = document.getElementById('codigoVerificacion');
-const bloqueVerificacion = document.getElementById('verificacionCodigo');
-const estadoTelefono = document.getElementById('estadoTelefono');
-const telefonoVerificado = document.getElementById('telefonoVerificado');
-const botonEnviar = form.querySelector('.button-submit');
-
-let verificationToken = '';
-let telefonoPendiente = '';
-
-function normalizarTelefono() {
-  const digits = telefonoInput.value.replace(/\D/g, '');
-  return `${codigoPais.value}${digits}`;
-}
-
-function telefonoValido(phone) {
-  return /^\+[1-9]\d{7,14}$/.test(phone) && phone.replace(/\D/g, '').length >= 8;
-}
-
-function mostrarEstado(texto, tipo = '') {
-  estadoTelefono.textContent = texto;
-  estadoTelefono.className = `phone-status ${tipo}`.trim();
-}
-
-function resetearVerificacion() {
-  verificationToken = '';
-  telefonoPendiente = '';
-  telefonoVerificado.value = '';
-  botonEnviar.disabled = true;
-  botonEnviar.textContent = 'Verificá tu teléfono para enviar';
-  bloqueVerificacion.classList.add('hidden');
-  codigoVerificacion.value = '';
-  mostrarEstado('');
-}
-
-async function solicitarCodigo() {
-  const phone = normalizarTelefono();
-  if (!telefonoValido(phone)) {
-    mostrarEstado('Ingresá un número válido con el código de tu país.', 'error');
-    telefonoInput.focus();
-    return;
-  }
-
-  btnEnviarCodigo.disabled = true;
-  btnEnviarCodigo.textContent = 'Enviando...';
-  mostrarEstado('Enviando código por SMS...');
-
-  try {
-    const response = await fetch('/api/send-code', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ phone })
-    });
-    const data = await response.json();
-    if (!response.ok || !data.ok) throw new Error(data.error || 'No se pudo enviar el código.');
-
-    telefonoPendiente = phone;
-    bloqueVerificacion.classList.remove('hidden');
-    mostrarEstado('Código enviado. Revisá tus SMS.', 'success');
-    codigoVerificacion.focus();
-  } catch (error) {
-    mostrarEstado(error.message || 'No se pudo enviar el código.', 'error');
-  } finally {
-    btnEnviarCodigo.disabled = false;
-    btnEnviarCodigo.textContent = 'Enviar código';
-  }
-}
-
-async function verificarCodigo() {
-  const code = codigoVerificacion.value.trim();
-  if (!telefonoPendiente || !/^\d{4,10}$/.test(code)) {
-    mostrarEstado('Ingresá el código recibido por SMS.', 'error');
-    return;
-  }
-
-  btnVerificarCodigo.disabled = true;
-  btnVerificarCodigo.textContent = 'Verificando...';
-
-  try {
-    const response = await fetch('/api/check-code', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ phone: telefonoPendiente, code })
-    });
-    const data = await response.json();
-    if (!response.ok || !data.ok) throw new Error(data.error || 'El código no es correcto.');
-
-    verificationToken = data.token;
-    telefonoVerificado.value = telefonoPendiente;
-    botonEnviar.disabled = false;
-    botonEnviar.textContent = 'Enviar mi solicitud';
-    mostrarEstado('✓ Número verificado correctamente.', 'success');
-    bloqueVerificacion.classList.add('hidden');
-  } catch (error) {
-    verificationToken = '';
-    telefonoVerificado.value = '';
-    botonEnviar.disabled = true;
-    mostrarEstado(error.message || 'No se pudo verificar el código.', 'error');
-  } finally {
-    btnVerificarCodigo.disabled = false;
-    btnVerificarCodigo.textContent = 'Verificar';
-  }
-}
-
-btnEnviarCodigo.addEventListener('click', solicitarCodigo);
-btnVerificarCodigo.addEventListener('click', verificarCodigo);
-telefonoInput.addEventListener('input', resetearVerificacion);
-codigoPais.addEventListener('change', resetearVerificacion);
+const EMAIL_EMPRESA = 'kokofabrica@gmail.com';
+const FORM_SUBMIT_URL = `https://formsubmit.co/ajax/${EMAIL_EMPRESA}`;
 
 async function enviarSolicitudPorEmail() {
   const planKey = planSelect.value;
@@ -277,40 +175,45 @@ async function enviarSolicitudPorEmail() {
     ? 'A cotizar'
     : formatoMoneda(PRECIOS_MANTENIMIENTO[planKey]?.[freqKey] ?? 0) + ' /mes';
 
-  const datos = {
-    verificationToken,
-    phone: telefonoVerificado.value,
-    'Nombre del emprendimiento': document.getElementById('nombreNegocio').value,
-    'Publico objetivo': document.getElementById('publicoObjetivo').value,
-    'Tipo de web': NOMBRES_PLAN[planKey] ?? planKey,
-    'Frecuencia de mantenimiento': freqSelect.options[freqSelect.selectedIndex]?.textContent ?? '',
-    'Redes sociales': redesSelect.options[redesSelect.selectedIndex]?.textContent ?? '',
-    'Boton de WhatsApp': tieneWsp ? 'Sí' : 'No',
-    'Formulario de consultas': tieneLeads ? 'Sí' : 'No',
-    'Inversion inicial': totalDesarrollo,
-    'Cuota de mantenimiento': mantenimiento
-  };
+  const datos = new URLSearchParams();
+  datos.append('_subject', `Nueva solicitud web — ${document.getElementById('nombreNegocio').value}`);
+  datos.append('_template', 'table');
+  datos.append('_captcha', 'false');
 
-  const respuesta = await fetch('/api/send-request', {
+  // Datos que ya existen en el formulario. No se cambió la interfaz.
+  datos.append('Nombre del emprendimiento', document.getElementById('nombreNegocio').value);
+  datos.append('Publico objetivo', document.getElementById('publicoObjetivo').value);
+  datos.append('Tipo de web', NOMBRES_PLAN[planKey] ?? planKey);
+  datos.append('Frecuencia de mantenimiento', freqSelect.options[freqSelect.selectedIndex]?.textContent ?? '');
+  datos.append('Redes sociales', redesSelect.options[redesSelect.selectedIndex]?.textContent ?? '');
+  datos.append('Boton de WhatsApp', tieneWsp ? 'Sí' : 'No');
+  datos.append('Formulario de consultas', tieneLeads ? 'Sí' : 'No');
+  datos.append('Inversion inicial', totalDesarrollo);
+  datos.append('Cuota de mantenimiento', mantenimiento);
+
+  const respuesta = await fetch(FORM_SUBMIT_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(datos)
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+    },
+    body: datos.toString()
   });
 
+  if (!respuesta.ok) {
+    throw new Error('No se pudo enviar la solicitud.');
+  }
+
   const resultado = await respuesta.json().catch(() => ({}));
-  if (!respuesta.ok || resultado.ok !== true) {
-    throw new Error(resultado.error || 'No se pudo enviar la solicitud.');
+  if (resultado.success === false) {
+    throw new Error(resultado.message || 'El servicio de correo rechazó la solicitud.');
   }
 }
 
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
 
-  if (!verificationToken || !telefonoVerificado.value) {
-    mostrarEstado('Verificá tu número antes de enviar la solicitud.', 'error');
-    return;
-  }
-
+  const botonEnviar = form.querySelector('.button-submit');
   const textoOriginal = botonEnviar.textContent;
   botonEnviar.disabled = true;
   botonEnviar.textContent = 'Enviando...';
@@ -327,11 +230,6 @@ form.addEventListener('submit', async (event) => {
       toast.style.opacity = '1';
     });
 
-    form.reset();
-    resetearVerificacion();
-    actualizarFrecuencia();
-    calcularCotizacion();
-
     setTimeout(() => {
       toast.style.opacity = '0';
       setTimeout(() => { toast.style.display = 'none'; }, 260);
@@ -339,15 +237,12 @@ form.addEventListener('submit', async (event) => {
   } catch (error) {
     console.error('Error al enviar la solicitud:', error);
     toast.querySelector('strong').textContent = 'No se pudo enviar';
-    toast.querySelector('p').textContent = error.message || 'Revisá tu conexión e intentá nuevamente.';
+    toast.querySelector('p').textContent = 'Revisá tu conexión o la configuración del correo e intentá nuevamente.';
     toast.style.display = 'flex';
     toast.style.opacity = '1';
-    botonEnviar.disabled = false;
   } finally {
-    if (verificationToken) {
-      botonEnviar.disabled = false;
-      botonEnviar.textContent = textoOriginal === 'Enviando...' ? 'Enviar mi solicitud' : textoOriginal;
-    }
+    botonEnviar.disabled = false;
+    botonEnviar.textContent = textoOriginal;
   }
 });
 
