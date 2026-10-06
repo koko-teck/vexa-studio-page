@@ -188,7 +188,13 @@
               <p>Esto nos ayuda a entender qué tipo de web puede servirte mejor.</p>
             </div>
 
-            <form id="cotizadorForm">
+            <!--
+  ENVÍO POR CORREO:
+  El formulario sigue usando el mismo ID (#cotizadorForm) y toda la lógica del cotizador
+  permanece en script.js. El envío del correo se realiza desde JavaScript mediante FormSubmit,
+  por lo que NO hace falta crear ni mantener un servidor propio.
+-->
+<form id="cotizadorForm">
               <div class="field-grid">
                 <div class="field">
                   <label for="nombreNegocio">Nombre de tu emprendimiento *</label>

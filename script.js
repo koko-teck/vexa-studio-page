@@ -144,19 +144,106 @@ triggers.forEach(trigger => {
   if (trigger !== planSelect) trigger.addEventListener('change', calcularCotizacion);
 });
 
-form.addEventListener('submit', (event) => {
-  event.preventDefault();
-  toast.style.display = 'flex';
-  toast.style.opacity = '0';
-  requestAnimationFrame(() => {
-    toast.style.transition = 'opacity .25s ease';
-    toast.style.opacity = '1';
+/* =========================================================
+   ENVÍO DE SOLICITUDES POR EMAIL — NUEVO
+   =========================================================
+   No se modificó la lógica del cotizador ni sus precios.
+
+   IMPORTANTE: reemplazá SOLO el correo de abajo por el Gmail
+   de tu empresa. Ejemplo: contacto@tuempresa.com o tuempresa@gmail.com
+
+   El envío se hace mediante FormSubmit, así que no necesitás
+   crear un servidor/backend propio.
+   ========================================================= */
+const EMAIL_EMPRESA = 'kokofabrica@gmail.com';
+const FORM_SUBMIT_URL = `https://formsubmit.co/ajax/${EMAIL_EMPRESA}`;
+
+async function enviarSolicitudPorEmail() {
+  const planKey = planSelect.value;
+  const freqKey = freqSelect.value;
+  const redesKey = redesSelect.value;
+  const tieneWsp = whatsappCheck.checked;
+  const tieneLeads = leadsCheck.checked;
+
+  const totalPlan = PRECIOS_PLAN[planKey] ?? 0;
+  const costoRedes = PRECIOS_REDES[redesKey] ?? 0;
+  const costoWsp = tieneWsp ? Number(whatsappCheck.value) : 0;
+  const costoLeads = tieneLeads ? Number(leadsCheck.value) : 0;
+  const totalAddons = costoRedes + costoWsp + costoLeads;
+  const totalDesarrollo = planKey === 'amedida' ? 'A cotizar' : formatoMoneda(totalPlan + totalAddons) + ' ARS';
+  const mantenimiento = planKey === 'amedida'
+    ? 'A cotizar'
+    : formatoMoneda(PRECIOS_MANTENIMIENTO[planKey]?.[freqKey] ?? 0) + ' /mes';
+
+  const datos = new URLSearchParams();
+  datos.append('_subject', `Nueva solicitud web — ${document.getElementById('nombreNegocio').value}`);
+  datos.append('_template', 'table');
+  datos.append('_captcha', 'false');
+
+  // Datos que ya existen en el formulario. No se cambió la interfaz.
+  datos.append('Nombre del emprendimiento', document.getElementById('nombreNegocio').value);
+  datos.append('Publico objetivo', document.getElementById('publicoObjetivo').value);
+  datos.append('Tipo de web', NOMBRES_PLAN[planKey] ?? planKey);
+  datos.append('Frecuencia de mantenimiento', freqSelect.options[freqSelect.selectedIndex]?.textContent ?? '');
+  datos.append('Redes sociales', redesSelect.options[redesSelect.selectedIndex]?.textContent ?? '');
+  datos.append('Boton de WhatsApp', tieneWsp ? 'Sí' : 'No');
+  datos.append('Formulario de consultas', tieneLeads ? 'Sí' : 'No');
+  datos.append('Inversion inicial', totalDesarrollo);
+  datos.append('Cuota de mantenimiento', mantenimiento);
+
+  const respuesta = await fetch(FORM_SUBMIT_URL, {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+    },
+    body: datos.toString()
   });
 
-  setTimeout(() => {
+  if (!respuesta.ok) {
+    throw new Error('No se pudo enviar la solicitud.');
+  }
+
+  const resultado = await respuesta.json().catch(() => ({}));
+  if (resultado.success === false) {
+    throw new Error(resultado.message || 'El servicio de correo rechazó la solicitud.');
+  }
+}
+
+form.addEventListener('submit', async (event) => {
+  event.preventDefault();
+
+  const botonEnviar = form.querySelector('.button-submit');
+  const textoOriginal = botonEnviar.textContent;
+  botonEnviar.disabled = true;
+  botonEnviar.textContent = 'Enviando...';
+
+  try {
+    await enviarSolicitudPorEmail();
+
+    toast.querySelector('strong').textContent = 'Solicitud enviada';
+    toast.querySelector('p').textContent = 'Recibimos tus datos. Pronto nos pondremos en contacto para ayudarte.';
+    toast.style.display = 'flex';
     toast.style.opacity = '0';
-    setTimeout(() => { toast.style.display = 'none'; }, 260);
-  }, 4200);
+    requestAnimationFrame(() => {
+      toast.style.transition = 'opacity .25s ease';
+      toast.style.opacity = '1';
+    });
+
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      setTimeout(() => { toast.style.display = 'none'; }, 260);
+    }, 4200);
+  } catch (error) {
+    console.error('Error al enviar la solicitud:', error);
+    toast.querySelector('strong').textContent = 'No se pudo enviar';
+    toast.querySelector('p').textContent = 'Revisá tu conexión o la configuración del correo e intentá nuevamente.';
+    toast.style.display = 'flex';
+    toast.style.opacity = '1';
+  } finally {
+    botonEnviar.disabled = false;
+    botonEnviar.textContent = textoOriginal;
+  }
 });
 
 actualizarFrecuencia();
