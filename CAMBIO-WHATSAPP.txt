@@ -1,0 +1,13 @@
+CAMBIO REALIZADO - CONTACTO WHATSAPP
+
+Se agregó al formulario el campo:
+
+WhatsApp / Teléfono *
+
+- Es obligatorio.
+- Usa type="tel" para facilitar la carga desde celulares.
+- Tiene autocomplete="tel" e inputmode="tel".
+- El campo se llama "whatsapp", por lo que su valor se envía junto con el resto de los datos del formulario.
+- No se modificaron las funciones del cotizador ni los cálculos existentes.
+
+El campo fue agregado directamente al HTML del formulario.

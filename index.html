@@ -279,7 +279,23 @@
                 </label>
               </div>
 
-              <button type="submit" class="button button-submit">Enviar mi solicitud</button>
+              
+        <!-- CAMBIO: WhatsApp/teléfono de contacto. Es obligatorio para poder contactar al cliente. -->
+        <div class="form-group">
+            <label for="whatsapp">WhatsApp / Teléfono *</label>
+            <input
+                type="tel"
+                id="whatsapp"
+                name="whatsapp"
+                placeholder="Ej: +54 9 223 123 4567"
+                autocomplete="tel"
+                inputmode="tel"
+                required
+                aria-required="true"
+            >
+            <small>Ingresá un número donde podamos contactarte.</small>
+        </div>
+<button type="submit" class="button button-submit">Enviar mi solicitud</button>
               <p class="form-note">Al enviar, vas a ver una confirmación. La cotización es orientativa y podemos ajustarla juntos.</p>
             </form>
           </div>

@@ -155,7 +155,7 @@ triggers.forEach(trigger => {
    El envío se hace mediante FormSubmit, así que no necesitás
    crear un servidor/backend propio.
    ========================================================= */
-const EMAIL_EMPRESA = 'kokofabrica@gmail.com';
+const EMAIL_EMPRESA = 'TU_CORREO_EMPRESA@gmail.com';
 const FORM_SUBMIT_URL = `https://formsubmit.co/ajax/${EMAIL_EMPRESA}`;
 
 async function enviarSolicitudPorEmail() {
