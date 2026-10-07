@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Editor visual de diseños Vexa Studio Page.">
+  <link rel="icon" type="image/png" href="img/favicon.png">
+  <title>Vexa | Editor visual</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="editor.css">
+</head>
+<body>
+  <div class="editor-glow editor-glow-a"></div>
+  <div class="editor-glow editor-glow-b"></div>
+
+  <header class="editor-topbar">
+    <div class="editor-brand">
+      <img src="img/logo-vexa-header.jpg" alt="Vexa" class="editor-logo">
+      <div>
+        <strong>VEXA</strong>
+        <span>EDITOR VISUAL</span>
+      </div>
+    </div>
+    <div class="editor-top-meta">
+      <span class="pill" id="planPill">Página Inicial</span>
+      <span class="save-state" id="saveState">Cambios en vivo</span>
+    </div>
+  </header>
+
+  <main class="editor-shell">
+    <aside class="editor-toolbar" aria-label="Herramientas de diseño">
+      <div class="toolbar-scroll">
+        <section class="tool-section">
+          <div class="tool-heading"><span>01</span><div><strong>Plan</strong><small>Define las funciones</small></div></div>
+          <label class="tool-field"><span>Tipo de web</span>
+            <select id="planSelectEditor"></select>
+          </label>
+        </section>
+
+        <section class="tool-section tool-templates">
+          <div class="tool-heading">
+            <span>02</span>
+            <div><strong>Plantilla</strong><small>4 opciones</small></div>
+          </div>
+          <div class="template-picker" id="templatePicker"></div>
+        </section>
+
+        <section class="tool-section">
+          <div class="tool-heading"><span>03</span><div><strong>Contenido</strong><small>Textos editables</small></div></div>
+          <label class="tool-field">
+            <span>Nombre del negocio</span>
+            <input id="businessName" type="text" maxlength="36" value="Tu negocio">
+          </label>
+          <label class="tool-field">
+            <span>Título principal</span>
+            <textarea id="heroTitle" rows="2" maxlength="90">Una presencia que hace crecer tu negocio</textarea>
+          </label>
+          <label class="tool-field">
+            <span>Descripción</span>
+            <textarea id="heroDescription" rows="3" maxlength="180">Presentá tus productos o servicios con una web clara, moderna y pensada para convertir visitas en consultas.</textarea>
+          </label>
+        </section>
+
+        <section class="tool-section">
+          <div class="tool-heading"><span>04</span><div><strong>Colores</strong><small>Identidad visual</small></div></div>
+          <label class="color-tool">
+            <span>Color principal</span>
+            <div class="color-row"><input id="accentColor" type="color" value="#00d2ff"><code id="accentHex">#00D2FF</code></div>
+          </label>
+          <div class="choice-label">Fondo del sitio</div>
+          <div class="choice-row" id="themeChoices">
+            <button type="button" class="choice active" data-theme="light">Claro</button>
+            <button type="button" class="choice" data-theme="soft">Suave</button>
+            <button type="button" class="choice" data-theme="contrast">Contraste</button>
+          </div>
+        </section>
+
+        <section class="tool-section">
+          <div class="tool-heading"><span>05</span><div><strong>Tipografía</strong><small>Estilo del contenido</small></div></div>
+          <label class="tool-field"><span>Familia</span>
+            <select id="fontFamily">
+              <option value="Inter">Inter</option>
+              <option value="Manrope">Manrope</option>
+              <option value="Poppins">Poppins</option>
+              <option value="Playfair Display">Playfair Display</option>
+            </select>
+          </label>
+        </section>
+
+        <section class="tool-section">
+          <div class="tool-heading"><span>06</span><div><strong>Funciones</strong><small>Según tu plan</small></div></div>
+          <div class="switch-list" id="featureList"></div>
+        </section>
+
+        <section class="tool-section">
+          <div class="tool-heading"><span>07</span><div><strong>Productos</strong><small>Cómo se muestran</small></div></div>
+          <div class="choice-row choice-row-wrap" id="productLayoutChoices">
+            <button type="button" class="choice active" data-product-layout="grid">Cuadrícula</button>
+            <button type="button" class="choice" data-product-layout="sidebar">Barra lateral</button>
+          </div>
+          <div class="lock-note" id="productLayoutNote"></div>
+        </section>
+
+        <section class="tool-section tool-actions">
+          <button type="button" class="button primary-wide" id="saveDesign">Guardar diseño</button>
+          <button type="button" class="button ghost-wide" id="sendToQuote">Usar en mi cotización</button>
+          <button type="button" class="text-button" id="resetDesign">Restablecer</button>
+        </section>
+      </div>
+    </aside>
+
+    <section class="editor-workspace">
+      <div class="workspace-head">
+        <div>
+          <span class="eyebrow">PREVISUALIZACIÓN EDITABLE</span>
+          <h1 id="workspaceTitle">Diseñá tu web</h1>
+          <p>Probá una plantilla, cambiale colores, tipografía y funciones. Vos definís visualmente la idea; Vexa se encarga de programarla.</p>
+        </div>
+        <div class="device-switch" aria-label="Vista del dispositivo">
+          <button type="button" class="device-btn active" data-device="desktop">Desktop</button>
+          <button type="button" class="device-btn" data-device="mobile">Móvil</button>
+        </div>
+      </div>
+
+      <div class="preview-stage" id="previewStage">
+        <div class="preview-frame" id="previewFrame">
+          <div class="preview-site" id="previewSite"></div>
+        </div>
+      </div>
+
+      <div class="editor-summary">
+        <div class="summary-copy">
+          <span class="eyebrow">INVERSIÓN ESTIMADA</span>
+          <strong id="editorPrice">$ 30.000 ARS</strong>
+          <small>El cálculo incluye el plan y los adicionales seleccionados en este editor. El mantenimiento se define en el cotizador.</small>
+        </div>
+        <div class="summary-chips" id="summaryChips"></div>
+      </div>
+
+      <details class="editor-notes">
+        <summary>¿Cómo funciona este editor?</summary>
+        <p>Las plantillas son referencias visuales. No modifican ni publican la web real. Cuando envíes tu selección, Vexa recibe la configuración elegida para programarla.</p>
+      </details>
+    </section>
+  </main>
+
+  <div class="mobile-toolbar-toggle" id="mobileToolbarToggle" aria-hidden="true">Herramientas</div>
+  <div id="designQuoteModal" class="design-quote-modal hidden" role="dialog" aria-modal="true" aria-labelledby="designQuoteTitle">
+    <div class="design-quote-backdrop" data-design-quote-backdrop></div>
+    <div class="design-quote-card">
+      <button type="button" class="design-quote-close" data-close-design-quote aria-label="Cerrar">×</button>
+      <div class="design-quote-head">
+        <span class="eyebrow">ÚLTIMO PASO</span>
+        <h2 id="designQuoteTitle">Mandanos tu diseño</h2>
+        <p>Tu selección visual ya está completa. Solo necesitamos tus datos de contacto y mantenimiento para enviarte la cotización sin que vuelvas a llenar el formulario principal.</p>
+      </div>
+
+      <div class="design-quote-preview-strip">
+        <div><span>PLAN + PLANTILLA</span><strong id="designQuotePlan">Página Inicial · Centro</strong></div>
+        <div><span>INVERSIÓN ESTIMADA</span><strong id="designQuoteInvestment">$ 30.000 ARS</strong></div>
+      </div>
+
+      <form id="designQuoteForm" class="design-quote-form">
+        <div class="design-quote-fields">
+          <label><span>Nombre de contacto *</span><input id="designClientContact" type="text" required maxlength="80" autocomplete="name" placeholder="Ej: Juan Pérez"></label>
+          <label><span>Empresa / emprendimiento *</span><input id="designClientCompany" type="text" required maxlength="100" autocomplete="organization" placeholder="Ej: Mi Tienda"></label>
+          <label><span>WhatsApp / teléfono *</span><input id="designClientPhone" type="tel" required maxlength="40" autocomplete="tel" inputmode="tel" placeholder="Ej: +54 9 ..."></label>
+          <label><span>Correo electrónico <em>(opcional)</em></span><input id="designClientEmail" type="email" maxlength="120" autocomplete="email" placeholder="Ej: hola@mitienda.com"></label>
+        </div>
+
+        <div class="design-quote-block">
+          <div class="design-quote-block-head"><strong>Mantenimiento y actualizaciones</strong><span>Opcional</span></div>
+          <select id="designQuoteMaintenance">
+            <option value="sin_mantenimiento">Sin mantenimiento</option>
+            <option value="mensual">Mensual</option>
+            <option value="quincenal">Quincenal</option>
+            <option value="semanal">Semanal</option>
+          </select>
+          <small id="designQuoteMaintenanceNote">Sin mantenimiento no se pueden actualizar productos, precios ni contenidos de forma periódica.</small>
+        </div>
+
+        <div class="design-quote-block design-quote-features-block">
+          <div class="design-quote-block-head"><strong>Funciones que elegiste</strong><span>Detalle para Vexa</span></div>
+          <div id="designQuoteFeatures" class="design-quote-features"></div>
+        </div>
+
+        <label class="design-quote-message"><span>Comentario adicional <em>(opcional)</em></span><textarea id="designClientMessage" rows="3" maxlength="500" placeholder="Podés aclarar alguna idea, referencia o pedido especial."></textarea></label>
+
+        <div class="design-quote-footer">
+          <div class="design-quote-status" id="designQuoteStatus" role="status" aria-live="polite"></div>
+          <div class="design-quote-actions">
+            <button type="button" class="button ghost-wide" data-close-design-quote>Seguir editando</button>
+            <button type="submit" class="button primary-wide" id="designQuoteSubmit">Enviar a Vexa</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="editor-toast" id="editorToast" role="status" aria-live="polite"></div>
+
+  <script src="editor.js"></script>
+</body>
+</html>
