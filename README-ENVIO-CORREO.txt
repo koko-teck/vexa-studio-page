@@ -93,7 +93,7 @@ Buscá EXTRA_PRICES.
 - instagram: 5000
 - facebook: 5000
 - tiktok: 5000
-- cart: 25000
+- cart: 25000  # <-- precio del carrito (editá EXTRA_PRICES en editor.js)
 - search: 7000
 - dynamicImages: 9000
 - sidebarProducts: 4000
@@ -111,3 +111,8 @@ Actualmente está configurado como:
    xenastudiopage@gmail.com
 
 El editor sigue funcionando sin backend propio; el envío depende de FormSubmit.
+
+NOTA — FOTOS DE MUESTRA DEL EDITOR
+Las fotos reales usadas en la previsualización están en:
+  /img/productos/
+Son imágenes 1200x900 (4:3). Para cambiar una muestra, reemplazá el archivo conservando el mismo nombre o editá el bloque de productos de editor.js.

@@ -86,6 +86,12 @@ const workLinkModal = document.getElementById('workLinkModal');
 const confirmWorkLink = document.getElementById('confirmWorkLink');
 let pendingWorkUrl = '';
 
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>'"]/g, ch => ({
+    '&':'&amp;', '<':'&lt;', '>':'&gt;',"'":'&#39;', '"':'&quot;'
+  }[ch]));
+}
+
 function formatoMoneda(valor) {
   return valor === 0 ? '$ 0' : '$ ' + new Intl.NumberFormat('es-AR').format(valor);
 }
@@ -443,3 +449,7 @@ confirmWorkLink?.addEventListener('click', () => {
 document.addEventListener('keydown', event => {
   if (event.key === 'Escape') cerrarModalTrabajos();
 });
+
+
+// IMPORTANTE: renderiza el apartado de trabajos reales en la página principal.
+renderTrabajosClientes();

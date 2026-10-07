@@ -18,16 +18,38 @@ const PLAN_NAMES = {
   dinamica: 'Web Dinámica', tienda: 'Tienda Online', tiendapro: 'Tienda Online Pro', amedida: 'A medida'
 };
 
-/* EDITÁ ESTOS VALORES CUANDO QUIERAS CAMBIAR LA INVERSIÓN DE CADA EXTRA. */
+/* =========================================================
+   PRECIOS DE FUNCIONES — EDITÁ SOLO ESTOS NÚMEROS
+   ---------------------------------------------------------
+   Acá podés cambiar a tu gusto el precio INDIVIDUAL de cada
+   función. No hace falta tocar el resto del editor.
+
+   IMPORTANTE:
+   - carrito            -> precio extra del carrito de compra
+   - whatsapp           -> botón de WhatsApp
+   - instagram          -> botón/enlace de Instagram
+   - facebook           -> botón/enlace de Facebook
+   - tiktok             -> botón/enlace de TikTok
+   - search             -> buscador
+   - dynamicImages      -> imágenes dinámicas al pasar el cursor
+   - sidebarProducts    -> productos en barra lateral
+   - leadForm           -> formulario de consultas
+
+   TIP: cambiá, por ejemplo, 25000 por 30000 y el nuevo valor
+   se actualizará automáticamente en el editor y en el correo.
+   ========================================================= */
+// NOTA: todos los precios editables de funciones están agrupados aquí.
+// Cambiá solo los números de este bloque y el editor actualizará subtotal, total y correo.
 const EXTRA_PRICES = {
-  instagram: 5000,
-  facebook: 5000,
-  tiktok: 5000,
-  whatsapp: 8000,
-  search: 7000,
-  dynamicImages: 9000,
-  sidebarProducts: 4000,
-  leadForm: 20000
+  cart: 25000,           // <-- CAMBIÁ ACÁ el precio del CARRITO
+  whatsapp: 8000,        // <-- CAMBIÁ ACÁ el precio de WHATSAPP
+  instagram: 5000,      // <-- CAMBIÁ ACÁ el precio de INSTAGRAM
+  facebook: 5000,        // <-- CAMBIÁ ACÁ el precio de FACEBOOK
+  tiktok: 5000,          // <-- CAMBIÁ ACÁ el precio de TIKTOK
+  search: 7000,          // <-- CAMBIÁ ACÁ el precio del BUSCADOR
+  dynamicImages: 9000,   // <-- CAMBIÁ ACÁ el precio de IMÁGENES DINÁMICAS
+  sidebarProducts: 4000, // <-- CAMBIÁ ACÁ el precio de BARRA LATERAL
+  leadForm: 20000        // <-- CAMBIÁ ACÁ el precio del FORMULARIO
 };
 
 /*
@@ -220,6 +242,8 @@ function renderPlanSelect(){
 }
 
 function resetStateForPlan(){
+  demoCartCount = 0;
+  demoCartTotal = 0;
   state = cloneDefaults();
   currentTemplateIndex = 0;
   planTemplates = planTemplatesFor(currentPlan);
@@ -285,6 +309,9 @@ function renderFeatureList(){
   }));
 }
 
+let demoCartCount = 0;
+let demoCartTotal = 0;
+
 function updateProductLayoutUI(){
   const allowedSidebar = planRule().productSidebar;
   document.querySelectorAll('[data-product-layout]').forEach(btn=>{
@@ -320,32 +347,71 @@ function productArea(){
   const canSearch = state.features.search;
   const dynamic = state.features.dynamicImages;
   const layout = state.productLayout;
-  const products = [1,2,3,4,5,6].map(i=>`
-    <article class="product-card ${dynamic?'dynamic':''}" ${dynamic?'tabindex="0" aria-label="Producto con imagen dinámica"':''}>
+
+  // =========================================================
+  // FOTOS REALES PARA LA PREVISUALIZACIÓN
+  // ---------------------------------------------------------
+  // Estas son las fotos que subiste para usar como muestras.
+  // Están en 1200x900 (4:3), por eso las mostramos en un marco
+  // 4:3: NO se estiran y se ven como productos reales.
+  //
+  // PARA CAMBIAR LAS FOTOS: reemplazá los archivos dentro de
+  // /img/productos/ usando los mismos nombres o modificá la ruta
+  // en este bloque.
+  // =========================================================
+  const products = [
+    {name:'Auriculares Studio', category:'Audio', price:'24.900', main:'01_auriculares_negros.jpg', alt:'12_auriculares_crema.jpg', tag:'NUEVO'},
+    {name:'Smartwatch Active', category:'Tecnología', price:'58.900', main:'02_smartwatch_negro.jpg', alt:null, tag:'DESTACADO'},
+    {name:'Botella Termo', category:'Lifestyle', price:'29.900', main:'03_botella_termica.jpg', alt:null, tag:'TOP VENTAS'},
+    {name:'Mochila Urban', category:'Accesorios', price:'32.500', main:'04_mochila_negra.jpg', alt:null, tag:'NUEVO'},
+    {name:'Zapatillas Street', category:'Calzado', price:'41.900', main:'06_zapatillas.jpg', alt:null, tag:'EDICIÓN'},
+    {name:'Mouse Gaming', category:'Tecnología', price:'36.900', main:'10_mouse_gaming.jpg', alt:null, tag:'LIMITADO'}
+  ];
+
+  const productMarkup = products.slice(0, layout==='sidebar'?4:6).map((product,i)=>{
+    const dynamicThis = dynamic && Boolean(product.alt);
+    return `
+    <article class="product-card ${dynamicThis?'dynamic':''}" ${dynamicThis?'tabindex="0" aria-label="'+escapeHtml(product.name)+' con imágenes dinámicas"':''}>
       <div class="product-image">
-        <div class="product-tag">${i===1?'NUEVO':'DESTACADO'}</div>
-        <div class="product-art main"><span></span></div>
-        <div class="product-art alt"><span style="transform:rotate(10deg) scale(.86)"></span></div>
+        <div class="product-tag">${escapeHtml(product.tag)}</div>
+        <img class="product-img main" src="img/productos/${product.main}" alt="Imagen de ${escapeHtml(product.name)}" loading="lazy">
+        ${dynamicThis?`<img class="product-img alt" src="img/productos/${product.alt}" alt="Vista alternativa de ${escapeHtml(product.name)}" loading="lazy">`:''}
+        ${dynamicThis?'<span class="dynamic-hint">Vista 2</span>':''}
       </div>
-      <h4>Producto ${String(i).padStart(2,'0')}</h4>
-      <p>${canSearch?'Colección · categoría':'Detalle del producto'}</p>
-      <div class="product-bottom"><span class="product-price">$ ${i===1?'24.900':'18.500'}</span>${canCart?`<button type="button" class="buy-mini filled">Comprar</button>`:`<button type="button" class="buy-mini">Consultar</button>`}</div>
-    </article>`).join('');
+      <div class="product-meta">
+        <span class="product-category">${escapeHtml(product.category)}</span>
+        <h4>${escapeHtml(product.name)}</h4>
+        <div class="product-rating" aria-label="5 de 5 estrellas">★★★★★ <span>4.9</span></div>
+      </div>
+      <div class="product-bottom">
+        <div><span class="product-price">$ ${product.price}</span><small>Envío calculado al finalizar</small></div>
+        ${canCart?`<button type="button" class="buy-mini filled" data-demo-add="${i}">Agregar</button>`:`<button type="button" class="buy-mini" data-demo-consult="${i}">Consultar</button>`}
+      </div>
+    </article>`;
+  }).join('');
+
   return `<section class="content-band product-section">
     <div class="products-layout ${layout}">
-      ${layout==='sidebar'?`<aside class="products-filter"><strong>Categorías</strong><span class="active">Todos</span><span>Novedades</span><span>Destacados</span><span>Ofertas</span></aside>`:''}
+      ${layout==='sidebar'?`<aside class="products-filter"><strong>Categorías</strong><span class="active">Todos</span><span>Indumentaria</span><span>Accesorios</span><span>Calzado</span><span>Tecnología</span><span>Ofertas</span></aside>`:''}
       <div class="products-list">
-        <div style="display:flex;justify-content:space-between;align-items:end;gap:10px;margin-bottom:10px">
-          <div><h3 style="margin:0">${currentPlan==='catalogo'?'Catálogo':currentPlan==='tiendapro'?'Tienda online':'Productos'}</h3>${canSearch?'<div style="margin-top:4px;color:var(--site-muted);font-size:7px">⌕ Buscar productos</div>':''}</div>
-          ${canCart?'<div class="site-feature-ribbon" style="margin:0;padding:7px 9px"><strong>🛒 3 productos</strong><span>Mi carrito</span></div>':''}
+        <div class="products-toolbar">
+          <div>
+            <span class="site-kicker">${currentPlan==='tiendapro'?'TIENDA ONLINE':'CATÁLOGO'}</span>
+            <h3 style="margin:3px 0 0">${currentPlan==='catalogo'?'Catálogo':currentPlan==='tiendapro'?'Tienda online':'Productos'}</h3>
+            <p class="products-toolbar-sub">${canCart?'Elegí un producto y agregalo al carrito.':'Explorá productos y consultá por el que te interese.'}</p>
+          </div>
+          <div class="product-tools">
+            ${canSearch?'<div class="demo-search"><img src="img/preview/search-mini.svg" alt=""><span>Buscar productos</span></div>':''}
+            ${canCart?`<button type="button" class="demo-cart-button" aria-label="Carrito"><img src="img/preview/feature-cart.svg" alt=""><span>Carrito <b id="site-cart-count">${demoCartCount}</b></span></button>`:''}
+          </div>
         </div>
-        <div class="site-grid cols-3">${products.slice(0, layout==='sidebar'?4:6)}</div>
+        <div class="site-grid cols-3">${productMarkup}</div>
       </div>
     </div>
-    ${dynamic?'<div class="site-feature-ribbon"><strong>↔ Imágenes dinámicas</strong><span>Pasá el cursor por un producto para ver otra vista.</span></div>':''}
+    ${dynamic?'<div class="site-feature-ribbon dynamic-ribbon"><div class="dynamic-ribbon-visual"><img src="img/productos/01_auriculares_negros.jpg" alt="Auriculares Studio color negro"><span class="dynamic-ribbon-arrow">↔</span><img src="img/productos/12_auriculares_crema.jpg" alt="Auriculares Studio color crema"></div><div class="dynamic-ribbon-copy"><strong>Imágenes dinámicas activas</strong><span>Pasá el cursor por Auriculares Studio para ver el mismo producto en otro color.</span></div></div>':''}
+    ${canCart?'<div class="site-feature-ribbon mini-cart-preview"><img src="img/preview/feature-cart.svg" alt="Ejemplo de carrito"><div><strong>Experiencia de compra</strong><span>El cliente puede agregar productos y ver el carrito en la misma web.</span></div><b class="mini-cart-total">Carrito: <span id="site-cart-total">$ 0</span></b></div>':''}
   </section>`;
 }
-
 function servicesSection(){
   if(['inicio','catalogo','catalogoplus','tienda','tiendapro'].includes(currentPlan)) return '';
   return `<section class="content-band"><h3>Cómo te ayuda la web</h3><div class="site-grid cols-3">
@@ -369,6 +435,26 @@ function heroMarkup(template){
   </section>`;
 }
 
+function featureShowcase(){
+  const selected = Object.entries(state.features).filter(([,on])=>on).map(([key])=>key);
+  const map = {
+    cart:['Carrito','Vista del carrito y compra online','feature-cart.svg'],
+    dynamicImages:['Productos dinámicos','Segunda vista del producto al interactuar','feature-dynamic.svg'],
+    search:['Buscador','Búsqueda rápida dentro del catálogo','feature-search.svg'],
+    leadForm:['Formulario de consultas','Formulario visible para recibir contactos','feature-form.svg'],
+    whatsapp:['WhatsApp','Acceso directo desde la web','feature-social.svg'],
+    instagram:['Instagram','Botón social integrado','feature-social.svg'],
+    facebook:['Facebook','Botón social integrado','feature-social.svg'],
+    tiktok:['TikTok','Botón social integrado','feature-social.svg']
+  };
+  const items = selected.map(key=>map[key]).filter(Boolean);
+  if(!items.length) return '';
+  return `<section class="content-band feature-showcase">
+    <div class="feature-showcase-head"><div><span class="site-kicker">FUNCIONES ACTIVAS</span><h3>Así se verían en tu sitio</h3></div><span class="feature-showcase-note">Referencia visual</span></div>
+    <div class="feature-showcase-list">${items.map(([title,desc,img])=>`<article class="feature-showcase-item"><img src="img/preview/${img}" alt="${escapeHtml(title)}"><div><strong>${escapeHtml(title)}</strong><p>${escapeHtml(desc)}</p></div></article>`).join('')}</div>
+  </section>`;
+}
+
 function renderPreview(){
   const template = planTemplates[currentTemplateIndex] || planTemplates[0];
   previewSite.className = `preview-site theme-${state.theme} font-${state.font.replace(/\s+/g,'-')}`;
@@ -379,13 +465,14 @@ function renderPreview(){
         <strong class="site-brand">${escapeHtml(state.businessName.toUpperCase())}</strong>
         <nav class="site-nav-links"><span>Inicio</span><span>${['catalogo','catalogoplus','tienda','tiendapro'].includes(currentPlan)?'Productos':'Servicios'}</span><span>Contacto</span></nav>
         <div class="site-nav-tools">
-          ${state.features.search?'<span class="site-icon">⌕</span>':''}
-          ${state.features.cart?'<span class="site-icon">🛒</span>':''}
+          ${state.features.search?'<span class="site-icon" aria-label="Buscador"><img src="img/preview/search-mini.svg" alt=""></span>':''}
+          ${state.features.cart?'<span class="site-icon cart-nav-icon" aria-label="Carrito"><img src="img/preview/feature-cart.svg" alt=""><b id="site-cart-count-nav">'+demoCartCount+'</b></span>':''}
         </div>
       </header>
       ${heroMarkup(template)}
       ${servicesSection()}
       ${productArea()}
+      ${featureShowcase()}
       ${state.features.leadForm ? `<section class="content-band lead-form-preview"><div class="lead-preview-box"><div><span class="site-kicker">CONTACTO</span><h3>Hablemos sobre tu proyecto</h3><p>Un formulario de consultas visible en la web para recibir datos de personas interesadas.</p></div><div class="lead-preview-fields"><span>Nombre</span><span>WhatsApp / Email</span><span class="lead-preview-button">Enviar consulta</span></div></div></section>` : ''}
       <section class="content-band">
         <div class="site-feature-ribbon"><strong>${escapeHtml(template.name)} · ${escapeHtml(PLAN_NAMES[currentPlan])}</strong><span>Tu selección visual, lista para programar.</span></div>
@@ -400,9 +487,36 @@ function renderPreview(){
     </div>`;
 }
 
+
+  // =========================================================
+  // MICRO-INTERACCIONES DE LA DEMO
+  // ---------------------------------------------------------
+  // No son compras reales: sirven para que el cliente vea cómo
+  // se sentiría una tienda funcional antes de contratarla.
+  // =========================================================
+  previewSite.querySelectorAll('[data-demo-add]').forEach(btn=>btn.addEventListener('click',()=>{
+    const idx = Number(btn.dataset.demoAdd);
+    const demoPrices = ['24900','32500','41900','58900','29900','36900'];
+    demoCartCount += 1;
+    demoCartTotal += Number(demoPrices[idx] || 0);
+    const countA = previewSite.querySelector('#site-cart-count');
+    const countB = previewSite.querySelector('#site-cart-count-nav');
+    const total = previewSite.querySelector('#site-cart-total');
+    if(countA) countA.textContent = demoCartCount;
+    if(countB) countB.textContent = demoCartCount;
+    if(total) total.textContent = money(demoCartTotal);
+    btn.textContent = 'Agregado ✓';
+    btn.classList.add('added');
+    setTimeout(()=>{btn.textContent='Agregar';btn.classList.remove('added')},1200);
+  }));
+
+  previewSite.querySelectorAll('[data-demo-consult]').forEach(btn=>btn.addEventListener('click',()=>{
+    btn.textContent = 'Consulta enviada ✓';
+    setTimeout(()=>btn.textContent='Consultar',1200);
+  }));
+
 function calculatePrice(){
-  if(currentPlan==='amedida') return null;
-  let total = PLAN_PRICES[currentPlan];
+  let total = PLAN_PRICES[currentPlan] || 0;
   const rule = planRule();
   Object.keys(state.features).forEach(key=>{
     if(!state.features[key]) return;
@@ -411,6 +525,7 @@ function calculatePrice(){
     total += EXTRA_PRICES[key] || 0;
   });
   if(state.productLayout==='sidebar' && rule.productSidebar) total += EXTRA_PRICES.sidebarProducts || 0;
+  if(currentPlan==='amedida' && total===0) return null;
   return total;
 }
 
@@ -492,6 +607,10 @@ const quoteModal = el('designQuoteModal');
 const quoteForm = el('designQuoteForm');
 const quotePlan = el('designQuotePlan');
 const quoteInvestment = el('designQuoteInvestment');
+const quoteSubtotal = el('designQuoteSubtotal');
+const quoteExtras = el('designQuoteExtras');
+const quoteTotal = el('designQuoteTotal');
+const quoteSummaryNote = el('designQuoteSummaryNote');
 const quoteFeatures = el('designQuoteFeatures');
 const quoteMaintenance = el('designQuoteMaintenance');
 const quoteCloseButtons = document.querySelectorAll('[data-close-design-quote]');
@@ -540,7 +659,13 @@ function openQuoteModal(selection){
   quoteForm?.reset();
   quotePlan.textContent = `${selection.planName} · ${selection.template}`;
   quoteCompanyInput.value = selection.businessName || '';
+  const initialExtras = selection.featureDetails.filter(item=>item.selected && !item.included).reduce((sum,item)=>sum + item.price,0) + (selection.sidebarProducts ? EXTRA_PRICES.sidebarProducts : 0);
+  const initialSubtotal = selection.plan === 'amedida' ? 0 : (selection.planPrice || 0);
   quoteInvestment.textContent = selection.estimated === null ? 'A cotizar' : money(selection.estimated) + ' ARS';
+  if(quoteSubtotal) quoteSubtotal.textContent = selection.plan === 'amedida' ? 'A cotizar' : money(initialSubtotal) + ' ARS';
+  if(quoteExtras) quoteExtras.textContent = initialExtras ? '+ ' + money(initialExtras) + ' ARS' : '$ 0 ARS';
+  if(quoteTotal) quoteTotal.textContent = selection.estimated === null ? 'A cotizar' : money(initialSubtotal + initialExtras) + ' ARS';
+  if(quoteSummaryNote) quoteSummaryNote.textContent = 'La tipografía y la gama de colores no generan cargos adicionales. El mantenimiento se detalla por separado.';
   quoteFeatures.innerHTML = selection.featureDetails
     .filter(item => item.selected || item.allowed)
     .map(item => `<div class="quote-feature-row ${item.selected?'selected':'muted'}">
@@ -569,7 +694,7 @@ function updateQuoteMaintenancePreview(){
   } else if(price === null){
     note.textContent = `${label}: el mantenimiento para una web a medida se define junto con el alcance.`;
   } else {
-    note.textContent = `${label}: ${money(price)} /mes. Permite solicitar actualizaciones según la frecuencia elegida.`;
+    note.textContent = `${label}: ${money(price)} /mes. Se cobra por separado del total inicial.`;
   }
 }
 function closeQuoteModal(){
@@ -599,7 +724,9 @@ function buildQuoteEmailData(selection){
   const featureExtras = selection.featureDetails.filter(item=>item.selected && !item.included);
   const featureIncluded = selection.featureDetails.filter(item=>item.selected && item.included);
   const extrasTotal = featureExtras.reduce((sum,item)=>sum + item.price,0) + (selection.sidebarProducts ? EXTRA_PRICES.sidebarProducts : 0);
-  const estimatedInitial = selection.plan === 'amedida' ? 'A cotizar' : money(selection.planPrice + extrasTotal) + ' ARS';
+  const estimatedInitial = selection.plan === 'amedida'
+    ? (extrasTotal > 0 ? `A cotizar + ${money(extrasTotal)} ARS en funciones seleccionadas` : 'A cotizar según alcance')
+    : money(selection.planPrice + extrasTotal) + ' ARS';
 
   const datos = {
     _subject: `🎨 VEXA — Nueva cotización desde editor — ${selection.planName} — ${quoteCompanyInput.value.trim() || selection.businessName}`,
@@ -616,7 +743,7 @@ function buildQuoteEmailData(selection){
 
     '━━━━━━━━ PLAN ELEGIDO ━━━━━━━━': '',
     'Plan': selection.planName,
-    'Valor base del plan': selection.plan === 'amedida' ? 'A cotizar' : money(selection.planPrice) + ' ARS',
+    'Valor base del plan': selection.plan === 'amedida' ? 'A cotizar según alcance' : money(selection.planPrice) + ' ARS',
     'Plantilla elegida': `${selection.template} (${selection.templateId})`,
     'Inversión estimada inicial': estimatedInitial,
 
@@ -682,6 +809,8 @@ async function submitEditorQuote(event){
 quoteForm?.addEventListener('submit', submitEditorQuote);
 
 function resetDesign(){
+  demoCartCount = 0;
+  demoCartTotal = 0;
   state = cloneDefaults();
   currentTemplateIndex = 0;
   renderControls(); renderPreviewAndSummary(); persist(false); toast('Diseño restablecido.');
@@ -720,6 +849,21 @@ el('resetDesign').addEventListener('click',resetDesign);
 window.addEventListener('storage',event=>{
   if(event.key==='vexa:designSelection') toast('La selección fue actualizada en otra pestaña.');
 });
+
+const mobileToolbarToggle = el('mobileToolbarToggle');
+const mobileToolbarBackdrop = el('mobileToolbarBackdrop');
+const mobileToolbar = document.querySelector('.editor-toolbar');
+function setMobileToolbar(open){
+  if(!mobileToolbar || !mobileToolbarToggle) return;
+  mobileToolbar.classList.toggle('mobile-open', open);
+  document.body.classList.toggle('mobile-toolbar-open', open);
+  mobileToolbarToggle.classList.toggle('is-open', open);
+  mobileToolbarToggle.setAttribute('aria-expanded', String(open));
+  mobileToolbarToggle.textContent = open ? 'Cerrar herramientas' : 'Herramientas';
+}
+mobileToolbarToggle?.addEventListener('click', ()=>setMobileToolbar(!mobileToolbar?.classList.contains('mobile-open')));
+mobileToolbarBackdrop?.addEventListener('click', ()=>setMobileToolbar(false));
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') setMobileToolbar(false); });
 
 restore();
 renderControls();

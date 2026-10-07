@@ -24,6 +24,7 @@
       </div>
     </div>
     <div class="editor-top-meta">
+      <a class="top-work-link" href="index.html#trabajos" target="_blank" rel="noopener">Ver trabajos reales ↗</a>
       <span class="pill" id="planPill">Página Inicial</span>
       <span class="save-state" id="saveState">Cambios en vivo</span>
     </div>
@@ -146,7 +147,7 @@
     </section>
   </main>
 
-  <div class="mobile-toolbar-toggle" id="mobileToolbarToggle" aria-hidden="true">Herramientas</div>
+  <button type="button" class="mobile-toolbar-toggle" id="mobileToolbarToggle" aria-expanded="false">Herramientas</button><div class="mobile-toolbar-backdrop" id="mobileToolbarBackdrop"></div>
   <div id="designQuoteModal" class="design-quote-modal hidden" role="dialog" aria-modal="true" aria-labelledby="designQuoteTitle">
     <div class="design-quote-backdrop" data-design-quote-backdrop></div>
     <div class="design-quote-card">
@@ -160,6 +161,16 @@
       <div class="design-quote-preview-strip">
         <div><span>PLAN + PLANTILLA</span><strong id="designQuotePlan">Página Inicial · Centro</strong></div>
         <div><span>INVERSIÓN ESTIMADA</span><strong id="designQuoteInvestment">$ 30.000 ARS</strong></div>
+      </div>
+
+      <div class="design-quote-block design-quote-summary-block">
+        <div class="design-quote-block-head"><strong>RESUMEN</strong><span>Desglose de tu inversión</span></div>
+        <div class="quote-summary-table">
+          <div><span>Subtotal del plan</span><strong id="designQuoteSubtotal">$ 0 ARS</strong></div>
+          <div><span>Funciones adicionales</span><strong id="designQuoteExtras">$ 0 ARS</strong></div>
+          <div class="quote-summary-total"><span>Total inicial</span><strong id="designQuoteTotal">$ 0 ARS</strong></div>
+        </div>
+        <small id="designQuoteSummaryNote">La tipografía y la gama de colores no generan cargos adicionales.</small>
       </div>
 
       <form id="designQuoteForm" class="design-quote-form">

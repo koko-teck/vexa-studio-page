@@ -50,3 +50,371 @@ body.modal-open{overflow:hidden}
 .design-quote-footer{display:flex;justify-content:space-between;gap:14px;align-items:end}.design-quote-status{min-height:26px;max-width:380px;color:#8da5b6;font-size:8px;line-height:1.5}.design-quote-status.sending{color:#bcefff}.design-quote-status.success{color:var(--success)}.design-quote-status.error{color:#ff9c9c}.design-quote-actions{display:flex;gap:8px;min-width:260px}.design-quote-actions .button{flex:1}.lead-preview-box{display:grid;grid-template-columns:1.15fr .85fr;gap:12px;align-items:stretch;padding:15px;border:1px solid var(--site-border);border-radius:14px;background:var(--site-surface)}.site-kicker{display:block;color:var(--site-accent);font-size:7px;font-weight:800;letter-spacing:.15em}.lead-preview-box h3{margin:5px 0 6px;color:var(--site-text);font-size:18px}.lead-preview-box p{margin:0;color:var(--site-muted);font-size:8px;line-height:1.55}.lead-preview-fields{display:grid;gap:6px;align-content:center}.lead-preview-fields>span{display:flex;align-items:center;min-height:27px;padding:0 8px;border:1px solid var(--site-border);border-radius:7px;color:var(--site-muted);font-size:7px;background:var(--site-bg)}.lead-preview-fields .lead-preview-button{justify-content:center;background:var(--site-accent);border-color:var(--site-accent);color:white;font-weight:800}
 @media (max-width:720px){.design-quote-modal{padding:10px}.design-quote-card{max-height:calc(100vh - 20px);border-radius:16px;padding:18px}.design-quote-fields{grid-template-columns:1fr}.design-quote-preview-strip{grid-template-columns:1fr}.design-quote-footer{flex-direction:column;align-items:stretch}.design-quote-actions{min-width:0}.lead-preview-box{grid-template-columns:1fr}}
 @media (max-width:420px){.design-quote-actions{flex-direction:column}.design-quote-actions .button{width:100%}}
+
+/* =========================================================
+   V8 — EDITOR MÓVIL + PREVIEWS ILUSTRATIVAS
+   En móvil la barra se convierte en un panel lateral plegable
+   para no tapar nunca la web que está diseñando el cliente.
+   ========================================================= */
+.top-work-link{display:inline-flex;align-items:center;gap:4px;color:#a9c6d8;text-decoration:none;font-size:8px;padding:7px 9px;border:1px solid var(--line);border-radius:999px;background:rgba(0,210,255,.04)}
+.top-work-link:hover{color:#fff;border-color:rgba(0,210,255,.34)}
+.product-image{position:relative;overflow:hidden;background:var(--site-surface)}
+.product-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .28s ease,transform .28s ease}
+.product-img.alt{opacity:0;transform:scale(1.03)}
+.product-card.dynamic:hover .product-img.main,.product-card.dynamic:focus-within .product-img.main,.product-card.dynamic:focus .product-img.main{opacity:0;transform:scale(.98)}
+.product-card.dynamic:hover .product-img.alt,.product-card.dynamic:focus-within .product-img.alt,.product-card.dynamic:focus .product-img.alt{opacity:1;transform:scale(1)}
+.product-card.dynamic{outline:none}
+.cart-ribbon{display:flex!important;align-items:center;gap:7px}.cart-ribbon img{width:30px;height:20px;object-fit:cover;border-radius:5px}.cart-ribbon span{display:block!important}
+.feature-showcase{border-top:1px solid var(--site-border)}
+.feature-showcase-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:9px}.feature-showcase-head h3{margin:5px 0 0;color:var(--site-text);font-size:17px}.feature-showcase-note{font-size:7px;color:var(--site-muted);padding:5px 7px;border:1px solid var(--site-border);border-radius:999px}
+.feature-showcase-list{display:flex;gap:8px;overflow-x:auto;padding-bottom:3px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+.feature-showcase-item{flex:0 0 min(285px,76%);display:flex;gap:8px;align-items:center;padding:7px;border:1px solid var(--site-border);border-radius:11px;background:var(--site-surface);scroll-snap-align:start}.feature-showcase-item img{width:72px;height:48px;object-fit:cover;border-radius:7px;border:1px solid var(--site-border);flex:0 0 auto}.feature-showcase-item strong{display:block;color:var(--site-text);font-size:8px}.feature-showcase-item p{margin:3px 0 0;color:var(--site-muted);font-size:7px;line-height:1.35}
+
+.mobile-toolbar-backdrop{display:none}
+@media (max-width:820px){
+  body{overflow:auto}
+  .editor-topbar{height:auto;min-height:64px;padding:10px 14px}
+  .editor-shell{height:auto;display:block}
+  .editor-toolbar{position:fixed;left:0;top:64px;bottom:0;width:min(88vw,310px);height:calc(100vh - 64px);z-index:70;transform:translateX(-105%);transition:transform .25s ease;box-shadow:26px 0 70px rgba(0,0,0,.44);border-right:1px solid var(--line);border-bottom:0}
+  .editor-toolbar.mobile-open{transform:translateX(0)}
+  .toolbar-scroll{height:100%;display:block;overflow:auto;padding:12px 12px 30px}
+  .tool-section{display:block;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:13px 4px 16px;background:transparent}
+  .tool-section.tool-actions{display:grid}
+  .tool-templates{flex-basis:auto}
+  .template-picker{grid-template-columns:repeat(2,minmax(0,1fr));overflow:visible}
+  .tool-section:first-child{padding-top:4px}
+  .mobile-toolbar-toggle{display:block;position:fixed;right:14px;bottom:14px;z-index:80;border:1px solid rgba(0,210,255,.4);background:linear-gradient(135deg,#0a2031,#071422);color:#e8fbff;box-shadow:0 14px 35px rgba(0,0,0,.38),0 0 28px rgba(0,210,255,.09);border-radius:999px;padding:10px 14px;font-size:10px;font-weight:800}
+  .mobile-toolbar-toggle.is-open{background:linear-gradient(135deg,#00d2ff,#2c74ff);color:#03121b}
+  .mobile-toolbar-backdrop{position:fixed;inset:64px 0 0;z-index:60;background:rgba(0,0,0,.46);backdrop-filter:blur(2px);display:none}
+  body.mobile-toolbar-open .mobile-toolbar-backdrop{display:block}
+  .editor-workspace{padding:16px 10px 32px}
+  .workspace-head{align-items:start;flex-direction:column;margin-bottom:12px}
+  .workspace-head p{max-width:none}
+  .device-switch{align-self:stretch}
+  .device-btn{flex:1}
+  .preview-stage{min-height:0;padding-top:5px}
+  .preview-frame{padding:7px;border-radius:16px}
+  .preview-site{min-height:560px}
+  .editor-summary{margin-top:6px}
+  .top-work-link{display:none}
+}
+@media (max-width:560px){
+  .editor-toolbar{top:60px;height:calc(100vh - 60px)}
+  .mobile-toolbar-backdrop{inset:60px 0 0}
+  .template-picker{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .feature-showcase-item{flex-basis:86%}
+}
+
+
+/* =========================================================
+   V9 — PREVISUALIZACIÓN DE PRODUCTOS MÁS REALISTA
+   ---------------------------------------------------------
+   Estos estilos hacen que el editor parezca una web funcional:
+   fotos de producto, precio, rating, búsqueda, carrito y CTA.
+   ========================================================= */
+.products-toolbar{display:flex;justify-content:space-between;gap:12px;align-items:end;margin-bottom:12px}.products-toolbar-sub{margin:3px 0 0;color:var(--site-muted);font-size:7px;line-height:1.45}.product-tools{display:flex;gap:6px;align-items:center}.demo-search{display:flex;align-items:center;gap:5px;height:27px;padding:0 8px;border-radius:7px;border:1px solid var(--site-border);background:var(--site-bg);color:var(--site-muted);font-size:7px}.demo-search img{width:12px;height:12px;object-fit:cover;border-radius:3px}.demo-cart-button{display:flex;align-items:center;gap:5px;min-height:27px;padding:0 8px;border-radius:7px;border:1px solid color-mix(in srgb,var(--site-accent) 45%,var(--site-border));background:var(--site-surface);color:var(--site-text);font-size:7px;font-weight:800}.demo-cart-button img{width:15px;height:15px;object-fit:cover;border-radius:3px}.demo-cart-button b{display:inline-grid;place-items:center;min-width:14px;height:14px;padding:0 3px;border-radius:999px;background:var(--site-accent);color:#fff;font-size:6px}.site-icon{display:inline-flex;align-items:center;gap:3px}.site-icon img{width:16px;height:16px;object-fit:cover;border-radius:4px}.site-icon b{display:inline-grid;place-items:center;min-width:13px;height:13px;padding:0 3px;border-radius:999px;background:var(--site-accent);color:#fff;font-size:5px}.product-meta{min-width:0}.product-category{text-transform:uppercase;letter-spacing:.1em;color:var(--site-muted);font-size:5px;font-weight:800}.product-rating{margin-top:3px;color:var(--site-accent);font-size:7px;letter-spacing:.06em}.product-rating span{color:var(--site-muted);letter-spacing:0;font-size:6px}.product-bottom>div{min-width:0}.product-bottom small{display:block;margin-top:2px;color:var(--site-muted);font-size:5px;line-height:1.3}.dynamic-hint{position:absolute;right:7px;bottom:7px;padding:3px 5px;border-radius:999px;background:rgba(3,10,17,.75);color:#fff;font-size:5px;z-index:3}.buy-mini.added{background:#2bb673;color:#fff;border-color:#2bb673}.mini-cart-preview{display:flex;align-items:center;gap:8px}.mini-cart-preview img{width:34px;height:24px;object-fit:cover;border-radius:5px;flex:0 0 auto}.mini-cart-preview div{min-width:0}.mini-cart-preview .mini-cart-total{margin-left:auto;color:var(--site-text);font-size:7px;white-space:nowrap}
+@media (max-width:720px){.products-toolbar{align-items:stretch;flex-direction:column}.product-tools{justify-content:space-between}.demo-search{flex:1}.product-tools>*{flex:1}.mini-cart-preview{align-items:flex-start}.mini-cart-preview .mini-cart-total{margin-left:0}.product-card h4{font-size:10px}.product-card p{font-size:7px}}
+
+
+/* =========================================================
+   V10 — RESUMEN DE COTIZACIÓN + IMÁGENES SIN DEFORMAR
+   ========================================================= */
+.design-quote-summary-block{background:linear-gradient(180deg,rgba(0,210,255,.055),rgba(7,20,33,.76))}
+.quote-summary-table{display:grid;gap:6px}
+.quote-summary-table>div{display:flex;justify-content:space-between;gap:14px;align-items:center;padding:8px 9px;border:1px solid #162c3f;border-radius:8px;background:#071422}
+.quote-summary-table span{color:#a9bdcb;font-size:8px}
+.quote-summary-table strong{font-size:9px;color:#e8fbff;white-space:nowrap}
+.quote-summary-total{border-color:rgba(0,210,255,.36)!important;background:rgba(0,210,255,.07)!important}
+.quote-summary-total span{color:#e8fbff;font-weight:800}
+.quote-summary-total strong{color:var(--cyan);font-size:10px}
+.design-quote-summary-block>small{display:block;margin-top:7px;color:#6f8799;font-size:7px;line-height:1.5}
+.product-image{aspect-ratio:1/1;min-height:0;background:#f5f8fa}
+.product-img{object-fit:contain!important;width:100%;height:100%;padding:5px;box-sizing:border-box}
+.feature-showcase-item img{object-fit:contain!important;background:#f4f7f9;padding:2px;box-sizing:border-box}
+
+/* Vista móvil simulada: se mantiene proporcional sin estirar la maqueta. */
+.preview-frame.mobile{width:min(390px,calc(100vw - 48px));max-width:100%;flex:0 0 auto}
+.preview-frame.mobile .preview-site{font-size:95%}
+.preview-frame.mobile .site-nav{padding:10px 12px}
+.preview-frame.mobile .site-brand strong{font-size:12px}
+.preview-frame.mobile .site-hero{padding:24px 18px 22px;gap:14px}
+.preview-frame.mobile .site-hero.layout-split,
+.preview-frame.mobile .site-hero.layout-reverse,
+.preview-frame.mobile .site-hero.layout-bento{grid-template-columns:1fr}
+.preview-frame.mobile .site-hero .hero-art{min-height:150px!important}
+.preview-frame.mobile .hero-copy h2{font-size:28px;line-height:1.04}
+.preview-frame.mobile .hero-copy p{font-size:9px}
+.preview-frame.mobile .content-band{padding:12px 16px 24px}
+.preview-frame.mobile .products-toolbar{gap:8px}
+.preview-frame.mobile .products-toolbar-sub{font-size:6px}
+.preview-frame.mobile .products-layout.sidebar{grid-template-columns:1fr}
+.preview-frame.mobile .products-filter{display:flex;gap:5px;overflow-x:auto;padding-bottom:4px;white-space:nowrap}
+.preview-frame.mobile .products-filter span{padding:5px 7px}
+.preview-frame.mobile .site-grid.cols-3,
+.preview-frame.mobile .products-layout.grid .products-list .site-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.preview-frame.mobile .product-card{min-width:0}
+.preview-frame.mobile .product-card h4{font-size:9px;line-height:1.2}
+.preview-frame.mobile .product-price{font-size:9px}
+.preview-frame.mobile .product-bottom{gap:5px}
+.preview-frame.mobile .buy-mini{padding:6px 7px;font-size:6px}
+.preview-frame.mobile .feature-showcase-list{overflow-x:auto}
+.preview-frame.mobile .site-footer-preview{padding:14px 16px}
+
+@media (max-width:420px){
+  .design-quote-summary-block{padding:10px}
+  .quote-summary-table>div{padding:7px 8px}
+  .preview-frame.mobile{width:calc(100vw - 28px)}
+}
+
+/* =========================================================
+   V11 — IMÁGENES DE PRODUCTO: PRESENTACIÓN PROPORCIONAL
+   Las imágenes de muestra están en 4:3 para que se vean
+   rectangulares y profesionales, sin deformarse.
+   Para volverlas cuadradas, cambiá 4 / 3 por 1 / 1.
+   ========================================================= */
+.product-image{
+  aspect-ratio:4 / 3 !important;
+  height:auto !important;
+  min-height:0 !important;
+  background:#f5f8fa;
+  border-radius:10px;
+}
+.product-img{
+  width:100% !important;
+  height:100% !important;
+  padding:0 !important;
+  object-fit:cover !important;
+  object-position:center !important;
+  display:block !important;
+}
+.product-img.alt{transform:scale(1.01);}
+.product-card.dynamic:hover .product-img.main,
+.product-card.dynamic:focus-within .product-img.main,
+.product-card.dynamic:focus .product-img.main{transform:scale(1.01)}
+.product-card.dynamic:hover .product-img.alt,
+.product-card.dynamic:focus-within .product-img.alt,
+.product-card.dynamic:focus .product-img.alt{transform:scale(1.01)}
+
+/* Las miniaturas de funciones también mantienen una proporción limpia. */
+.feature-showcase-item img{
+  width:82px !important;
+  height:54px !important;
+  aspect-ratio:3 / 2;
+  object-fit:cover !important;
+  object-position:center;
+  padding:0 !important;
+  display:block;
+  background:#f4f7f9;
+}
+
+/* En móvil seguimos usando el mismo formato 4:3 para evitar saltos visuales. */
+@media (max-width:560px){
+  .product-image{aspect-ratio:4 / 3 !important;}
+  .feature-showcase-item img{width:74px !important;height:50px !important;}
+}
+
+/* =========================================================
+   V12 — FOTOS REALES DE PRODUCTO
+   ---------------------------------------------------------
+   Las fotos entregadas por Vexa son 1200x900 (4:3). El marco
+   también es 4:3, así que no hay deformación ni estiramiento.
+   Para usar formato cuadrado en el futuro: 4 / 3 -> 1 / 1.
+   ========================================================= */
+.product-image{
+  aspect-ratio:4 / 3 !important;
+  width:100% !important;
+  height:auto !important;
+  min-height:0 !important;
+  overflow:hidden !important;
+  background:#f5f7f9 !important;
+  border-radius:10px !important;
+}
+.product-img{
+  position:absolute !important;
+  inset:0 !important;
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  object-fit:contain !important;
+  object-position:center !important;
+  padding:0 !important;
+  margin:0 !important;
+  box-sizing:border-box !important;
+}
+.product-img.alt{opacity:0}
+.product-card.dynamic:hover .product-img.main,
+.product-card.dynamic:focus .product-img.main,
+.product-card.dynamic:focus-within .product-img.main{opacity:0}
+.product-card.dynamic:hover .product-img.alt,
+.product-card.dynamic:focus .product-img.alt,
+.product-card.dynamic:focus-within .product-img.alt{opacity:1}
+.dynamic-hint{
+  position:absolute;right:8px;bottom:8px;z-index:4;
+  padding:4px 7px;border-radius:999px;
+  background:rgba(4,12,20,.78);border:1px solid rgba(255,255,255,.14);
+  color:#fff;font-size:6px;font-weight:800;letter-spacing:.04em;
+  pointer-events:none;
+}
+.feature-showcase-item img{
+  aspect-ratio:3 / 2 !important;
+  width:82px !important;
+  height:auto !important;
+  object-fit:cover !important;
+  object-position:center !important;
+}
+@media (max-width:560px){
+  .product-image{aspect-ratio:4 / 3 !important}
+  .product-card h4{font-size:9px;line-height:1.2}
+}
+
+/* =========================================================
+   V13 — CATALOGO / TIENDA: CORRECCIÓN DE DISTRIBUCIÓN
+   ---------------------------------------------------------
+   Antes, .products-list también era un grid y eso hacía que
+   la barra superior y la grilla de productos ocuparan columnas
+   separadas. Resultado: productos demasiado angostos,
+   mucho espacio vacío y botones encimados.
+   ========================================================= */
+.products-layout.grid .products-list{
+  display:block !important;
+  width:100%;
+}
+.products-layout.grid .products-list > .site-grid{
+  width:100%;
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  align-items:stretch;
+}
+.product-card{
+  display:flex !important;
+  flex-direction:column !important;
+  min-width:0;
+}
+.product-card .product-meta{
+  flex:1 1 auto;
+  min-width:0;
+}
+.product-card h4{
+  overflow-wrap:anywhere;
+  line-height:1.25;
+}
+.product-card .product-bottom{
+  width:100%;
+  min-width:0;
+  display:flex !important;
+  align-items:flex-end !important;
+  justify-content:space-between !important;
+  flex-wrap:nowrap;
+  margin-top:auto !important;
+  padding-top:9px;
+}
+.product-card .product-bottom > div{
+  flex:1 1 auto;
+  min-width:0;
+  overflow:hidden;
+}
+.product-card .product-price,
+.product-card .product-bottom small{
+  display:block;
+  overflow-wrap:anywhere;
+}
+.product-card .buy-mini{
+  flex:0 0 auto;
+  white-space:nowrap;
+  min-width:max-content;
+}
+
+/* En catálogos anchos aprovechamos mejor el área disponible. */
+@media (min-width:1180px){
+  .products-layout.grid .products-list > .site-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    gap:14px;
+  }
+}
+
+/* En tamaños intermedios reducimos a 2 columnas antes de que
+   las cards pierdan legibilidad. */
+@media (max-width:900px){
+  .products-layout.grid .products-list > .site-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  }
+}
+
+/* En la preview móvil: una sola columna solo cuando el ancho
+   realmente es pequeño; así evitamos botones apretados. */
+@media (max-width:560px){
+  .preview-frame.mobile .products-layout.grid .products-list > .site-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:8px;
+  }
+  .preview-frame.mobile .product-card .product-bottom{
+    align-items:flex-start !important;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+  .preview-frame.mobile .product-card .product-bottom > div{
+    flex-basis:100%;
+  }
+}
+/* =========================================================
+   V14 — IMÁGENES DINÁMICAS: RIBBON COMPACTO
+   ---------------------------------------------------------
+   El aviso de imágenes dinámicas nunca debe mostrar la foto
+   a tamaño natural. Solo funciona como una muestra compacta.
+   La interacción real ocurre dentro de la tarjeta del producto.
+   ========================================================= */
+.dynamic-ribbon{
+  align-items:center;
+  overflow:hidden;
+}
+.dynamic-ribbon-visual{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  flex:0 0 auto;
+}
+.dynamic-ribbon-visual img{
+  display:block !important;
+  width:58px !important;
+  height:44px !important;
+  min-width:58px !important;
+  max-width:58px !important;
+  min-height:44px !important;
+  max-height:44px !important;
+  aspect-ratio:4 / 3 !important;
+  object-fit:cover !important;
+  object-position:center !important;
+  padding:0 !important;
+  margin:0 !important;
+  border-radius:7px !important;
+  border:1px solid var(--site-border) !important;
+  background:#f5f7f9 !important;
+}
+.dynamic-ribbon-arrow{
+  display:grid;
+  place-items:center;
+  width:16px;
+  height:16px;
+  border-radius:999px;
+  background:rgba(0,210,255,.11);
+  border:1px solid var(--site-border);
+  color:var(--site-accent);
+  font-size:10px;
+  line-height:1;
+  flex:0 0 auto;
+}
+.dynamic-ribbon-copy{
+  min-width:0;
+}
+.dynamic-ribbon-copy span{
+  display:block;
+}
+@media (max-width:720px){
+  .dynamic-ribbon{
+    align-items:flex-start;
+    flex-wrap:wrap;
+  }
+  .dynamic-ribbon-copy{
+    flex:1 1 180px;
+  }
+}
+
